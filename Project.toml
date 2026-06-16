@@ -1,0 +1,7 @@
+name = "AIRSilt"
+uuid = "1d54734d-d754-47f4-ac36-71f6370f2188"
+version = "0.0.0"
+authors = ["Parth Shimpi <pas201@srcf.net>"]
+
+[deps]
+Oscar = "f1435218-dba5-11e9-1e4d-f1a5fab5fc13"
