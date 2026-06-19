@@ -5,3 +5,7 @@ authors = ["Parth Shimpi <pas201@srcf.net>"]
 
 [deps]
 Oscar = "f1435218-dba5-11e9-1e4d-f1a5fab5fc13"
+UUIDs = "cf7118a7-6976-5b1a-9a39-7adc72f591a4"
+
+[compat]
+UUIDs = "1.11.0"
