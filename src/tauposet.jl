@@ -1,9 +1,6 @@
 module TauPoset
 export enumerateTauTilts
 
-@static if 1 < 0
-    include("taurigids.jl")
-end
 using Oscar, ..TauRigids
 
 coker(f::GAP.GapObj) = GAP.Globals.CoKernel(f)

@@ -1,5 +1,5 @@
 module AIRSilt
-export enumerateTauTilts, IndecTauRigid, SuppTauTilting, isSimpleMutation, gvectors, rank
+export enumerateTauTilts, IndecTauRigid, SuppTauTilting, gvectors, rank, LeftMutationQuiver
 
 using Oscar
 
@@ -12,5 +12,8 @@ using .TauRigids
 
 include("tauposet.jl")
 using .TauPoset
+
+include("tauhasse.jl")
+using .TauHasse
 
 end
