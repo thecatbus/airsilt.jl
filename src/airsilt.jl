@@ -1,5 +1,5 @@
 module AIRSilt
-export enumerateTauTilts, IndecTauRigid, SuppTauTilting, gvectors, rank, LeftMutationQuiver
+export enumerateTauTilts, IndecTauRigid, SuppTauTilting, gvectors, rank, LeftMutationQuiver, plotQuiver
 
 using Oscar
 
