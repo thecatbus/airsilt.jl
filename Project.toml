@@ -1,21 +1,23 @@
 name = "AIRSilt"
 uuid = "1d54734d-d754-47f4-ac36-71f6370f2188"
-version = "0.0.0"
+version = "0.2.0"
 authors = ["Parth Shimpi <pas201@srcf.net>"]
 
 [deps]
 ColorSchemes = "35d6a980-a343-548e-a6ea-1d62b119f2f4"
+FromFile = "ff7dd447-1dcb-4ce3-b8ac-22a812192de7"
 Graphs = "86223c79-3864-5bf0-83f7-82e725a168b6"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+MetaGraphsNext = "fa8bd995-216d-47f1-8a91-f3b68fbeb377"
 Oscar = "f1435218-dba5-11e9-1e4d-f1a5fab5fc13"
 PlotlyBase = "a03496cd-edff-5a9b-9e67-9cda94a718b5"
 TikzGraphs = "b4f28e30-c73f-5eaf-a395-8a9db949a742"
-UUIDs = "cf7118a7-6976-5b1a-9a39-7adc72f591a4"
 
 [compat]
 ColorSchemes = "3.31.0"
+FromFile = "0.1.6"
 Graphs = "1.14.0"
 LinearAlgebra = "1.12.0"
+MetaGraphsNext = "0.8.0"
 PlotlyBase = "0.8.23"
 TikzGraphs = "1.4.0"
-UUIDs = "1.11.0"
