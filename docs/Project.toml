@@ -1,0 +1,4 @@
+[deps]
+AIRSilt = "1d54734d-d754-47f4-ac36-71f6370f2188"
+Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+Oscar = "f1435218-dba5-11e9-1e4d-f1a5fab5fc13"

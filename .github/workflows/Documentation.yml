@@ -1,0 +1,35 @@
+name: Documentation 
+
+on: 
+  push:
+    branches:
+      - main 
+    tags: ['*']
+  pull_request:
+
+jobs: 
+  build: 
+    runs-on: ubuntu-latest
+    steps: 
+      - name: Checkout source code 
+        uses: actions/checkout@v4
+
+      - name: Set up Julia
+        uses: julia-actions/setup-julia@v2
+        with:
+          version: '1.12'
+
+      - name: Cache Julia dependencies
+        uses: julia-actions/cache@v2
+
+      - name: Install Workspace Dependencies
+        run: |
+          julia --project -e '
+            using Pkg
+            Pkg.instantiate()'
+
+      - name: Build and Deploy Docs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          julia --project -e 'include("docs/make.jl")'
