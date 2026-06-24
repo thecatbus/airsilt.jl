@@ -16,12 +16,12 @@ macro bind(def, element)
     #! format: on
 end
 
+# ╔═╡ 3cd0db02-6322-4601-bebf-44fba4f39565
+using Pkg, Revise, PlutoUI
+
 # ╔═╡ 3dee82da-6b2c-11f1-9d3c-e508785fce07
 # ╠═╡ show_logs = false
-begin
-    using Pkg, Revise, PlutoUI
-    Pkg.develop(path=joinpath(@__DIR__,".."))
-end
+Pkg.develop(path=joinpath(@__DIR__,".."))
 
 # ╔═╡ 33008548-eb49-4695-bc62-158875005c59
 using AIRSilt
@@ -48,7 +48,7 @@ The package builds on top of the `QPA` package for the `GAP` computer algebra sy
 "
 
 # ╔═╡ d9a90539-d361-4d78-af4a-5a58030bfa11
-md"The simplest way to initialise an algebra is to simply write the `GAP` code for the algebra as a string and then call `GAP.evalstr()` on it."
+md"The simplest way to initialise an algebra is to write the `GAP` code for the algebra as a string and then call `GAP.evalstr()` on it."
 
 # ╔═╡ 40ad318a-f42f-459c-a64e-05621bcf84f8
 md"Try editing the `GAP` code to change the algebra! All methods in `AIRSilt.jl` have been implemented for finite dimensional algebras over finite fields (or the field of rational numbers). However the methods can sometimes be extended to infinite dimensional algebras via central reduction. 
@@ -125,7 +125,7 @@ md"The above function initialised the Hasse quiver of the τ-poset, or atleast a
 The poset can be visualised as a directed graph, with an optional argument to display the vertices as 2-term silting complexes (default), or as the matrix of g-vectors or as a simple `\bullet`."
 
 # ╔═╡ ca374d5f-6efa-4324-ac9a-3438ce1af9cf
-tikzplot(poset, vertexlabel=:complex)
+tikzplot(poset, vertexlabel=:complex, vxfont="\\large", options="scale=2")
 
 # ╔═╡ 8bfef074-4b9b-4df2-bfe2-986d2432f208
 md"To access properties of the poset we use the `MetaGraphsNext.jl` package. Each vertex is labelled (and can be accessed) by its matrix of g-vectors, but it carries the data of the complete underlying module that is exposed to all `GAP` functions."
@@ -197,4 +197,5 @@ md"The package `AIRSilt.jl` is written and maintained by [Parth Shimpi](https://
 # ╠═bd390c00-a283-48f5-b1ec-21067f0aa25b
 # ╟─be147f29-0ee8-462c-babf-53fe5f6c5b39
 # ╟─41eeb8dd-3813-4702-a082-9ee46c964172
+# ╟─3cd0db02-6322-4601-bebf-44fba4f39565
 # ╟─3dee82da-6b2c-11f1-9d3c-e508785fce07

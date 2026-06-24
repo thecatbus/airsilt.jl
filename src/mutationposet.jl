@@ -210,13 +210,20 @@ function tauposet(algebra::GAP.GapObj; timeout::Int64=10)
 end
 
 """
-    tikzplot(poset::TauPoset; vertexlabel::Symbol=:complex)
+    tikzplot(poset::TauPoset; vertexlabel::Symbol=:complex, vxfont::String="", options::String="")
 
-Returns a `TikzPictures.TikzPicture` object that is a `Tikz`-drawing of the `TauPoset`. This object can then be saved to a file, or its raw `Tikz`-code can be accessed, see `TikzPictures.jl` documentation. 
+Returns a `TikzPictures.TikzPicture` object that is a `Tikz`-drawing of the `TauPoset`. This object can then be saved to a file, or its raw `Tikz`-code can be accessed, see `TikzPictures.jl` documentation. Optional arguments specify how vertices and edges should be rendered.
 
-Optional arguments specify whether the vertices should be rendered as two-term complexes (`vertexlabel=:complex`, this is default), as g-matrices (`vertexlabel=:gmatrix`), or as a simple bullet (`vertexlabel=:bullet`).
+# Arguments 
+- `poset::TauPoset`: The poset of τ-tilting pairs to be plotted
+- `vertexlabel::Symbol`: How vertices should be represented. Accepts one of three options: 
+    1. `vertexlabel=:complex` (default): displays each τ-tilting pair as its corresponding 2-term silting complex 
+    2. `vertexlabel=:gmatrix`: displays each τ-tilting pair as its g-matrix 
+    3. `vertexlabel=:bullet`: displays each vertex of the poset as a bullet 
+- `fontoption::String`: Can be set to `"\\scriptsize"` or `"\\footnotesize"` or any such string that should be prepended on each vertex. 
+- `options::String`: A string of comma-separated options that is supplied directly to `TikzGraphs.plot()`. This can be used eg to set node distance by setting `options="scale=2"`.
 """
-function tikzplot(poset::TauPoset; vertexlabel::Symbol=:complex)
+function tikzplot(poset::TauPoset; vertexlabel::Symbol=:complex, vxfont::String="", options::String="")
 
     vxlabelfunc(gmat) =
         if vertexlabel == :complex
@@ -230,8 +237,8 @@ function tikzplot(poset::TauPoset; vertexlabel::Symbol=:complex)
     vxLabels = String[]
     for vcode in Graphs.vertices(poset)
         gmat = label_for(poset, vcode)
-        push!(vxLabels, "\\scriptsize" * vxlabelfunc(gmat))
+        push!(vxLabels, vxfont * vxlabelfunc(gmat))
     end
 
-    return TikzGraphs.plot(poset.graph, Layouts.Layered(), vxLabels)
+    return TikzGraphs.plot(poset.graph, Layouts.Layered(), vxLabels, options=options)
 end
