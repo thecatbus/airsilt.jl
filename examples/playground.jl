@@ -76,7 +76,7 @@ This said, some other examples have been preloaded into the notebook and can be 
 
     (quiver="3, [[1,2,\"x1\"],[1,2,\"y1\"],[1,2,\"z1\"],
                           [1,2,\"x2\"],[1,2,\"y2\"],[1,2,\"z2\"]]", 
-     rels="") => "Beilinson(P2)",
+     rels="x1*y2-y1*x2, x1*z2-z1*x2, y1*z2-z1*y2") => "Beilinson(P2)",
 
 ])
 
