@@ -21,3 +21,6 @@ LinearAlgebra = "1.12.0"
 MetaGraphsNext = "0.8.0"
 PlotlyBase = "0.8.23"
 TikzGraphs = "1.4.0"
+
+[workspace]
+projects = ["docs", "examples"]

@@ -26,6 +26,7 @@ jobs:
         run: |
           julia --project -e '
             using Pkg
+            Pkg.develop(PackageSpec(path=pwd()))
             Pkg.instantiate()'
 
       - name: Build and Deploy Docs
