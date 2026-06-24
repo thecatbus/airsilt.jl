@@ -24,7 +24,7 @@ jobs:
 
       - name: Install Workspace Dependencies
         run: |
-          julia --project -e '
+          julia --project=docs -e '
             using Pkg
             Pkg.develop(PackageSpec(path=pwd()))
             Pkg.instantiate()'
