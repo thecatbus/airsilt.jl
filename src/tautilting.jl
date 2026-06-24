@@ -8,7 +8,7 @@ using FromFile, Oscar
 """ 
     TauTilting
 
-A type alias for an (ordered) list of `TauRigid` and `ShiftedProjective` objects. If `(M,P)` is a τ-tilting (i.e. maximal τ-rigid) pair, then the list contains indecomposable summands of `M` and `P[1]`.The order is induced by the vertices of the algebra, that is, it extends the (unique and well-defined) order under which indecomposable projectives appear at indices corresponding to their vertices.
+A type alias for an (ordered) list of `TauRigid` and `ShiftedProjective` objects. If `(M,P)` is a τ-tilting (i.e. maximal τ-rigid) pair, then the list contains indecomposable summands of `M` and `P[1]`. Note the order is non-canonical and dependent on how the object was constructed.
 """
 TauTilting = Vector{Union{TauRigid,ShiftedProjective}}
 
@@ -16,7 +16,7 @@ TauTilting = Vector{Union{TauRigid,ShiftedProjective}}
 """
     gmatrix(mx::TauTilting)
 
-Returns the (square) matrix of g-vectors of a τ-tilting pair. The columns correspond to summands and respect the order induced by vertices of the algebra.
+Returns the (square) matrix of g-vectors of a τ-tilting pair. The columns correspond to summands and respect the order of summands.
 """
 gmatrix(mx::TauTilting) = hcat(getproperty.(mx,:gvec)...)
 

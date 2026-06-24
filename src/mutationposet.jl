@@ -17,7 +17,7 @@ A mutable and edge-labelled directed graph representing the (partially computed)
 Implemented as a `MetaGraph` whose
 - vertices carry data of type `TauTilting`
 - vertices are labelled by, and can be referred to using the g-matrix of the corresponding τ-tilting pair
-- edges correspond to left mutation and are labelled by the index of the mutated summand
+- edges correspond to left mutation in indecomposable summands
 - metadata (accessible via `graph[]`) is a dictionary, with one key `:algebra` that has value the underlying algebra as a `GAP`-object.
 
 The graph object is then exposed to methods in the `MetaGraphs.jl` package and the `Graphs.jl` package, for example, `collect(labels(...))` lists all vertex labels. See `MetaGraphs.jl` and `Graphs.jl` documentation for more.
@@ -27,7 +27,7 @@ TauPoset = MetaGraph{
     DiGraph{Int64},                             # Type of Graph
     Matrix{Int64},                              # Type of Vertex label
     TauTilting,                                 # Type of Vertex data
-    Int64,                                      # Type of Edge data
+    Nothing,                                    # Type of Edge data
     Dict{Symbol,Any},                           # Type of Graph data
 }
 
@@ -37,7 +37,7 @@ TauPoset = MetaGraph{
 
 Adds the τ-tilting pair `mx` to a (possibly partially computed) `poset` of τ-tilting pairs. Automatically finds all edges to and from already existing vertices to `mx` and updates the `poset` accordingly. Returns a pair whose first element is `true` if the `poset` was updated, and `false` if the module was already in the poset. The second element is the g-matrix of `mx`, which can be used as a key to refer to the corresponding vertex.
 
-Use carefully, since this the addition is not validated and can pollute the poset. In particular, make sure the summands of `mx` are in the correct order.
+Use carefully, since this the addition is not validated and can pollute the poset.
 """
 function add_to_tauposet!(poset::TauPoset, mx::TauTilting)
     gmx = gmatrix(mx)
@@ -45,11 +45,12 @@ function add_to_tauposet!(poset::TauPoset, mx::TauTilting)
 
     add_vertex!(poset, gmx, mx)
     for gmz in labels(poset)
-        @views differingcols = findall(j -> gmz[:, j] != gmx[:, j], axes(gmx, 2))
+        differingcols = [i for (i, col) in enumerate(eachcol(gmx))
+                         if !(col in eachcol(gmz))]
         if length(differingcols) == 1
             isBongartzCompletionAt(mx, differingcols) ?
-            add_edge!(poset, gmx, gmz, differingcols[1]) :
-            add_edge!(poset, gmz, gmx, differingcols[1])
+            add_edge!(poset, gmx, gmz) :
+            add_edge!(poset, gmz, gmx)
         else
             continue
         end
@@ -128,11 +129,10 @@ function mutate_in_tauposet!(poset::TauPoset, gmx::Matrix{Int64}, n::Int64)
     mx = haskey(poset, gmx) ? poset[gmx] :
          throw(ArgumentError("A τ-tilting pair with g-matrix $(gmx) hasn't been computed yet!"))
 
-    for gmy in inneighbor_labels(poset, gmx)
-        poset[gmy, gmx] != n ? continue : return (false, gmy)
-    end
-    for gmy in outneighbor_labels(poset, gmx)
-        poset[gmx, gmy] != n ? continue : return (false, gmy)
+    for gmy in neighbor_labels(poset, gmx)
+        if all(col in eachcol(gmy) for (i, col) in enumerate(eachcol(gmx)) if i != n)
+            return (false, gmy)
+        end
     end
 
     my = mutate(mx, n, algebra=poset[][:algebra])
@@ -161,12 +161,12 @@ function tauposet(algebra::GAP.GapObj; timeout::Int64=10)
     result = MetaGraph(DiGraph{Int64}(),
         label_type=Matrix{Int64},
         vertex_data_type=TauTilting,
-        edge_data_type=Int64,
+        edge_data_type=Nothing,
         graph_data=Dict{Symbol,Any}(:algebra => algebra))
 
     seed = collect(GAP.Globals.IndecProjectiveModules(algebra))
     maxelt = TauTilting(TauRigid.(seed))
-    minelt = TauTilting(ShiftedProjective.(reverse(seed)))
+    minelt = TauTilting(ShiftedProjective.(seed))
     _, gmax = add_to_tauposet!(result, maxelt)
     _, gmin = add_to_tauposet!(result, minelt)
 
@@ -210,13 +210,13 @@ function tauposet(algebra::GAP.GapObj; timeout::Int64=10)
 end
 
 """
-    tikzplot(poset::TauPoset; vertexlabel::Symbol=:complex, edgelabel::Bool=false)
+    tikzplot(poset::TauPoset; vertexlabel::Symbol=:complex)
 
 Returns a `TikzPictures.TikzPicture` object that is a `Tikz`-drawing of the `TauPoset`. This object can then be saved to a file, or its raw `Tikz`-code can be accessed, see `TikzPictures.jl` documentation. 
 
-Optional arguments specify whether the vertices should be rendered as two-term complexes (`vertexlabel=:complex`, this is default), as g-matrices (`vertexlabel=:gmatrix`), or as a simple bullet (`vertexlabel=:bullet`). The `edgelabel=true` flag will label the edges with indices of mutated summands.
+Optional arguments specify whether the vertices should be rendered as two-term complexes (`vertexlabel=:complex`, this is default), as g-matrices (`vertexlabel=:gmatrix`), or as a simple bullet (`vertexlabel=:bullet`).
 """
-function tikzplot(poset::TauPoset; vertexlabel::Symbol=:complex, edgelabel::Bool=false)
+function tikzplot(poset::TauPoset; vertexlabel::Symbol=:complex)
 
     vxlabelfunc(gmat) =
         if vertexlabel == :complex
@@ -233,18 +233,5 @@ function tikzplot(poset::TauPoset; vertexlabel::Symbol=:complex, edgelabel::Bool
         push!(vxLabels, "\\scriptsize" * vxlabelfunc(gmat))
     end
 
-    edLabels = Dict{Tuple{Int,Int},String}()
-    for ecode in Graphs.edges(poset)
-        src = Graphs.src(ecode)
-        dst = Graphs.dst(ecode)
-        i = poset[label_for(poset, src), label_for(poset,dst)]
-        edLabels[(src,dst)] = "\$ $(i) \$"
-    end
-
-    kwargs = Dict{Symbol, Any}()
-    if edgelabel 
-        kwargs[:edge_labels] = edLabels
-    end
-
-    return TikzGraphs.plot(poset.graph, Layouts.Layered(), vxLabels; kwargs...)
+    return TikzGraphs.plot(poset.graph, Layouts.Layered(), vxLabels)
 end
