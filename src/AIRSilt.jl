@@ -1,11 +1,43 @@
 # src/AIRSilt.jl
 
 module AIRSilt
-using FromFile, Oscar
+using FromFile, Oscar, Pluto
 
 function __init__()
     GAP.Packages.load("qpa")
+
+    if isinteractive()
+        printstyled(raw"""
+        _______________________  
+         /\  | |_| |_' | |   |    Documentation: https://thecatbus.github.io/airsilt.jl
+        /  \ | | \ ._| | |_  |    
+        -----------------------   Type "playground()" to launch interactive notebook 
+          TOOLS FOR τ-TILTING   
+        =======================   Version 0.2.3 (2026-06-24)
+        """)
+    end
+
 end
+
+function playground()
+    packagedir = joinpath(@__DIR__, "..")
+    notebook = joinpath(packagedir, "examples", "playground.jl")
+    examplesenv = joinpath(packagedir, "examples")
+
+    startup_expr = "begin import Pkg; Pkg.activate(\"$(escape_string(examplesenv))\"); Pkg.instantiate() end"
+
+    if !isfile(notebook)
+        error("Notebook not found at $(notebook)")
+    end
+
+    @info "Launching interactive notebook..."
+
+    Pluto.run(notebook=notebook,
+        workspace_use_distributed=false,
+        workspace_custom_startup_expr=startup_expr)
+end
+
+export playground
 
 1 < 0 && include("rigidmodules.jl") && include("tautilting.jl") && include("mutationposet.jl") && include("gfan.jl")
 
