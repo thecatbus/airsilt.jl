@@ -7,6 +7,6 @@ makedocs(sitename="AIRSilt.jl",
     repo="https://github.com/thecatbus/airsilt.jl")
 
 deploydocs(
-    repo="://github.com",
+    repo="github.com/thecatbus/airsilt.jl",
     devbranch="main"
 )
