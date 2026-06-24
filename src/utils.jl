@@ -6,7 +6,7 @@ const SUBSCRIPT = Dict('0' => '₀', '1' => '₁', '2' => '₂', '3' => '₃', '
 subscr(n) = String([SUBSCRIPT[digit] for digit in string(n)])
 supscr(n) = String([SUPERSCRIPT[digit] for digit in string(n)])
 
-function presentgvec(gvec::Vector{Int64})
+function presentgvec(gvec::AbstractVector{Int64})
     deg0, deg1 = [], []
 
     for (i, a) in enumerate(gvec)
@@ -31,7 +31,7 @@ function presentgvec(gvec::Vector{Int64})
 end
 
 function presentgmat(gmat::AbstractMatrix)
-    summands = presentvec.(collect(eachcol(gmat)))
+    summands = presentgvec.(eachcol(gmat))
     return join(summands, "⊕")
 end
 

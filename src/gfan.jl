@@ -1,6 +1,6 @@
 # src/gfan.jl
 
-using ColorSchemes, FromFile, LinearAlgebra, PlotlyBase
+using ColorSchemes, FromFile, LinearAlgebra, MetaGraphsNext, PlotlyBase
 @from "utils.jl" import presentgvec, presentgmat
 @from "mutationposet.jl" import TauPoset
 
@@ -78,7 +78,9 @@ function gconetraces(gmat::AbstractMatrix; color="gray", normalize=false)
                     font=attr(color="black"))))
 
     elseif length(cone) == 3
-        xs, ys, zs = getindex.(cone, 1), getindex.(cone, 2), getindex.(cone, 3)
+        xs = Float64.(getindex.(cone, 1))
+        ys = Float64.(getindex.(cone, 2))
+        zs = Float64.(getindex.(cone, 3))
 
         if normalize
             norms = norm.(cone)
