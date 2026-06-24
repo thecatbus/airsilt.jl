@@ -1,25 +1,20 @@
-module AIRSilt
-export enumerateTauTilts, IndecTauRigid, SuppTauTilting, gvectors, mutate, LeftMutationQuiver, plotQuiver, plotFan
+# src/AIRSilt.jl
 
-using Oscar
+module AIRSilt
+using FromFile, Oscar
 
 function __init__()
     GAP.Packages.load("qpa")
 end
 
-include("stringutils.jl")
-using .StringUtils
+1 < 0 && include("rigidmodules.jl") && include("tautilting.jl") && include("mutationposet.jl")
 
-include("taurigids.jl")
-using .TauRigids
+@from "rigidmodules.jl" import TauRigid, ShiftedProjective
+@from "tautilting.jl" import TauTilting, gmatrix, isBongartzCompletionAt, isCoBongartzCompletionAt
+@from "mutationposet.jl" import TauPoset, mutate, mutate_in_tauposet!, tauposet, tikzplot
 
-include("tauposet.jl")
-using .TauPoset
-
-include("tauhasse.jl")
-using .TauHasse
-
-include("gfan.jl")
-using .GFan
+export TauRigid, ShiftedProjective
+export TauTilting, gmatrix, isBongartzCompletionAt, isCoBongartzCompletionAt
+export TauPoset, mutate, mutate_in_tauposet!, tauposet, tikzplot
 
 end

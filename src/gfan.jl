@@ -1,13 +1,17 @@
-module GFan
-export plotFan
+# src/gfan.jl
 
-using PlotlyBase, ColorSchemes, LinearAlgebra, ..StringUtils, ..TauRigids
+using ColorSchemes, FromFile, LinearAlgebra, PlotlyBase
+@from "utils.jl" import presentgvec, presentgmat
+@from "mutationposet.jl" import TauPoset
 
-function tracesOfGCone(mx::SuppTauTilting; color="gray", normalize=false)
+1 < 0 && include("utils.jl") && include("rigidmodules.jl") && include("tautilting.jl") && include("mutationposet.jl")
+
+function gconetraces(gmat::AbstractMatrix; color="gray", normalize=false)
     traces = []
-    cone = collect(gvectors(mx))
-    raylabels = [PRESENTGVECTOR(g) for g in cone]
-    conelabel = join(['⇾' in str ? "($(str))" : str for str in raylabels], "⊕")
+
+    cone = collect(eachcol(gmat))
+    conelabel = presentgmat(gmat)
+    raylabels = [presentgvec(g) for g in cone]
 
     if length(cone) == 2
         if normalize
@@ -29,8 +33,10 @@ function tracesOfGCone(mx::SuppTauTilting; color="gray", normalize=false)
             ys = [0.0; [sin(a) for a in angles]; 0.0]
 
             shoelace = xs[1:end-1] .* ys[2:end] .- xs[2:end] .* ys[1:end-1]
-            centroid_x = sum((xs[1:end-1] .+ xs[2:end]) .* shoelace) / (3 * sum(shoelace))
-            centroid_y = sum((ys[1:end-1] .+ ys[2:end]) .* shoelace) / (3 * sum(shoelace))
+            centroid_x = sum((xs[1:end-1] .+ xs[2:end]) .* shoelace) /
+                         (3 * sum(shoelace))
+            centroid_y = sum((ys[1:end-1] .+ ys[2:end]) .* shoelace) /
+                         (3 * sum(shoelace))
         else
             xs = [0; getindex.(cone, 1); 0]
             ys = [0; getindex.(cone, 2); 0]
@@ -72,15 +78,13 @@ function tracesOfGCone(mx::SuppTauTilting; color="gray", normalize=false)
                     font=attr(color="black"))))
 
     elseif length(cone) == 3
-        xs = getindex.(cone, 1)
-        ys = getindex.(cone, 2)
-        zs = getindex.(cone, 3)
+        xs, ys, zs = getindex.(cone, 1), getindex.(cone, 2), getindex.(cone, 3)
 
         if normalize
-            norms = sqrt.(xs .^ 2 .+ ys .^ 2 .+ zs .^ 2)
-            xs = xs ./ norms
-            ys = ys ./ norms
-            zs = zs ./ norms
+            norms = norm.(cone)
+            xs ./= norms
+            ys ./= norms
+            zs ./= norms
         end
 
         centroid_x = sum(xs) / length(xs)
@@ -118,19 +122,33 @@ function tracesOfGCone(mx::SuppTauTilting; color="gray", normalize=false)
                 hoverlabel=attr(bgcolor="rgba(0,0,0,0.01)",
                     bordercolor="rgba(0,0,0,0.01)",
                     font=attr(color="black"))))
+
+    else
+        throw(DomainError("Plotting only implemented for gfans of dimensions two and three!"))
     end
 
     return traces
 end
 
-function plotFan(tauTilts; palette=ColorSchemes.pastel, normalize=true, width=800, height=800)
+
+"""
+    gfanplot(tauposet::TauPoset; palette=ColorSchemes.pastel, normalize=true, width=800, height=800)
+
+Returns a `PlotlyBase.Plot` object which plots the g-fan formed by all τ-tilting pairs in a `TauPoset`. For 3-dimensional fans, cones are represented by a slice. The default behaviour is for this slice to have endpoints on a unit sphere, this can be disabled by setting `normalize=false` (in which case the slice will be determined by g-vectors of summands).
+
+The object is exposed to all `PlotlyBase` methods, for example `addtraces!(gfanplot(...), scatter(x=[1],y=[1]))` will add a point at `(1,1)` in the plot. See `PlotlyBase` documentation for more.
+"""
+function gfanplot(tauposet::TauPoset; palette=ColorSchemes.pastel, normalize=true, width=800, height=800)
     traces = GenericTrace[]
-    for mx in tauTilts
-        append!(traces, tracesOfGCone(mx, color=get(palette, rand()), normalize=normalize))
+    for gmat in labels(tauposet)
+        append!(traces, gconetraces(gmat, color=get(palette, rand()), normalize=normalize))
     end
 
-    if any(t -> haskey(t, :z) || haskey(t, :type) && t[:type] in ["scatter3d", "mesh3d"], traces)
-        layout = Layout(
+    layout =
+        any(t -> haskey(t, :z) ||
+                (haskey(t, :type) && t[:type] in ["scatter3d", "mesh3d"]), traces) ?
+        # 3D Layout
+        Layout(
             width=width,
             height=height,
             plot_bgcolor="white",
@@ -164,9 +182,9 @@ function plotFan(tauTilts; palette=ColorSchemes.pastel, normalize=true, width=80
             ),
             hovermode="closest",
             showlegend=false,
-        )
-    else
-        layout = Layout(
+        ) :
+        # 2D Layout
+        Layout(
             width=width,
             height=height,
             xaxis=attr(visible=false),
@@ -174,11 +192,8 @@ function plotFan(tauTilts; palette=ColorSchemes.pastel, normalize=true, width=80
             plot_bgcolor="white",
             hovermode="closest",
             showlegend=false)
-        push!(traces,
-            scatter(x=[0], y=[0], hoverinfo="skip",
-                marker=attr(symbol="cross", color="black")))
-    end
-
+    push!(traces,
+        scatter(x=[0], y=[0], hoverinfo="skip",
+            marker=attr(symbol="cross", color="black")))
     return Plot(traces, layout)
-end
 end
