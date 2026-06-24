@@ -71,6 +71,7 @@ function matrix_to_tex(mat::AbstractMatrix)
     for i in axes(mat, 1)
         push!(rows, join(string.(mat[i, :]), " & "))
     end
+    alignment = String(['r' for _ in axes(mat,2)])
     body = join(rows, " \\\\ ")
-    return "\$\\begin{bmatrix} $(body) \\end{bmatrix}\$"
+    return "\$\\left[\\begin{array}{$(alignment)} $(body) \\end{array}\\right]\$"
 end
