@@ -129,7 +129,7 @@ function mutate_in_tauposet!(poset::TauPoset, gmx::Matrix{Int64}, n::Int64)
     mx = haskey(poset, gmx) ? poset[gmx] :
          throw(ArgumentError("A τ-tilting pair with g-matrix $(gmx) hasn't been computed yet!"))
 
-    for gmy in neighbor_labels(poset, gmx)
+    for gmy in (inneighbor_labels(poset, gmx) ∪ outneighbor_labels(poset, gmx))
         if all(col in eachcol(gmy) for (i, col) in enumerate(eachcol(gmx)) if i != n)
             return (false, gmy)
         end
