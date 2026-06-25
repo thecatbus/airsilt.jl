@@ -19,10 +19,6 @@ end
 # ╔═╡ 3cd0db02-6322-4601-bebf-44fba4f39565
 using Pkg, Revise, PlutoUI
 
-# ╔═╡ 3dee82da-6b2c-11f1-9d3c-e508785fce07
-# ╠═╡ show_logs = false
-Pkg.develop(path=joinpath(@__DIR__,".."))
-
 # ╔═╡ 33008548-eb49-4695-bc62-158875005c59
 using AIRSilt
 
@@ -198,4 +194,3 @@ md"The package `AIRSilt.jl` is written and maintained by [Parth Shimpi](https://
 # ╟─be147f29-0ee8-462c-babf-53fe5f6c5b39
 # ╟─41eeb8dd-3813-4702-a082-9ee46c964172
 # ╟─3cd0db02-6322-4601-bebf-44fba4f39565
-# ╟─3dee82da-6b2c-11f1-9d3c-e508785fce07
