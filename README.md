@@ -18,3 +18,12 @@ Alternatively, you can add it programmatically within standard Julia scripts:
 using Pkg
 Pkg.add(url="https://github.com/thecatbus/airsilt.jl")
 ```
+
+## Quickstart
+
+The package includes a pre-configured Pluto notebook showcasing functionality. To start this, open a Julia REPL and run the following.
+
+```julia
+julia> using AIRSilt
+julia> AIRSilt.playground()
+```
