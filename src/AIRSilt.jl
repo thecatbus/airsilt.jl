@@ -4,6 +4,10 @@ module AIRSilt
 using FromFile, Oscar, Pluto
 
 function __init__()
+    if ccall(:jl_generating_output, Cint, ()) == 1
+        return nothing 
+    end
+
     GAP.Packages.load("qpa")
 
     if isinteractive()
@@ -16,7 +20,6 @@ function __init__()
         =======================   Version 0.2.3 (2026-06-24)
         """)
     end
-
 end
 
 function playground()
