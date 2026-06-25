@@ -17,7 +17,7 @@ function __init__()
         /  \ | | \ ._| | |_  |    
         -----------------------   Type "playground()" to launch interactive notebook 
           TOOLS FOR τ-TILTING   
-        =======================   Version 0.2.3 (2026-06-24)
+        =======================   Version 0.2.4 (2026-06-25)
         """)
     end
 end
