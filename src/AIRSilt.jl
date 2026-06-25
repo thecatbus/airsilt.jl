@@ -21,8 +21,12 @@ end
 
 function playground()
     packagedir = joinpath(@__DIR__, "..")
-    notebook = joinpath(packagedir, "examples", "playground.jl")
+    template = joinpath(packagedir, "examples", "playground.jl")
     examplesenv = joinpath(packagedir, "examples")
+
+    notebook = joinpath(tempdir(), "playground.jl")
+    cp(template, notebook)
+    chmod(template, 0o644)
 
     startup_expr = "begin import Pkg; Pkg.activate(\"$(escape_string(examplesenv))\"); Pkg.instantiate() end"
 
